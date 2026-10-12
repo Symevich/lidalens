@@ -1,0 +1,1220 @@
+/* ============================================================
+   style.css — LidaLens
+   Візуальная мова «Цэгла і ручнік»: цёплая папера, чарніла,
+   адзін моцны цагляны акцэнт, чырвоны арнамент-ручнік, буйныя фота.
+   Усе колеры — толькі праз токены (:root). Жорсткіх #hex у
+   кампанентах няма (выключэнне — data-URI арнаменту і цёмная тэма).
+   ============================================================ */
+
+/* ============================================================
+   1. TOKENS
+   ============================================================ */
+
+*,
+*::before,
+*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* ── Палітра ── */
+  --bg:            #f6f0e4;   /* цёплая папера */
+  --surface:       #fffdf8;   /* карткі */
+  --surface-2:     #f3e9d8;   /* другасная паверхня (квіз, матавы фон фота) */
+  --text:          #231d1a;   /* чарніла */
+  --muted:         #6b5f57;   /* другасны тэкст */
+  --brick:         #9c3b2a;   /* галоўны акцэнт */
+  --brick-dark:    #7a2a1d;   /* hover / active */
+  --amber:         #f5a623;   /* другасны акцэнт: нумары, бэйджы */
+  --ok:            #2f7d4a;
+  --bad:           #b3261e;
+  --border-muted:  rgba(107, 95, 87, 0.28);
+  --hero-scrim:    rgba(30, 16, 10, 0.62);
+  --paper-line:    rgba(107, 95, 87, 0.14);
+
+  /* ── Шрыфты ── */
+  --font-display: "Lora", Georgia, "Times New Roman", serif;
+  --font-ui:      "Roboto", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* ── Сетка адступаў (4px) ── */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+
+  /* ── Радыусы ── */
+  --radius-sm:   10px;
+  --radius-md:   10px;
+  --radius-lg:   14px;
+  --radius-xl:   20px;
+  --radius-pill: 999px;
+
+  /* ── Цені (цёплыя, не сіне-шэрыя) ── */
+  --shadow:       0 12px 30px rgba(60, 30, 15, 0.12);
+  --shadow-hover: 0 20px 42px rgba(60, 30, 15, 0.22);
+  --shadow-menu:  0  8px 24px rgba(60, 30, 15, 0.22);
+  --shadow-modal: 0 24px 60px rgba(40, 20, 10, 0.35);
+
+  --focus-ring: var(--brick);
+
+  /* ── Бяспечныя зоны ── */
+  --safe-top:    env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left:   env(safe-area-inset-left, 0px);
+  --safe-right:  env(safe-area-inset-right, 0px);
+
+  /* ── Каркас ── */
+  --topbar-h:    56px;
+  --bottomnav-h: 64px;
+  --gutter:      var(--space-4);
+  --content-max: 1120px;
+  --read-max:    36rem;   /* ≈ 66 сімвалаў у радку артыкула */
+
+  /* ── Арнамент-«ручнік» ──
+     Адзін паўтаральны матыў: ромб з кропкай. Чырвоны --brick (#9c3b2a)
+     на празрыстым. Выкарыстоўваецца эканомна: палоска пад загалоўкам,
+     раздзяляльнік блокаў, верхняя паласа шторкі выніку. */
+  --ornament: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='12' viewBox='0 0 22 12'%3E%3Cpath d='M11 1l5 5-5 5-5-5z' fill='none' stroke='%239c3b2a' stroke-width='1.3'/%3E%3Ccircle cx='11' cy='6' r='1.5' fill='%239c3b2a'/%3E%3Cpath d='M0 6h3M19 6h3' stroke='%239c3b2a' stroke-width='1.3'/%3E%3C/svg%3E");
+}
+
+/* Цёмная тэма (этап 7) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:           #1b1512;
+    --surface:      #261e1a;
+    --surface-2:    #2f251f;
+    --text:         #f1e8da;
+    --muted:        #b6a595;
+    --brick:        #d2644f;
+    --brick-dark:   #e07a63;
+    --amber:        #f5b642;
+    --ok:           #59a878;
+    --bad:          #e06a63;
+    --border-muted: rgba(241, 232, 218, 0.20);
+    --hero-scrim:   rgba(0, 0, 0, 0.66);
+    --paper-line:   rgba(241, 232, 218, 0.12);
+    --shadow:       0 12px 30px rgba(0, 0, 0, 0.35);
+    --shadow-hover: 0 20px 42px rgba(0, 0, 0, 0.5);
+    --shadow-menu:  0  8px 24px rgba(0, 0, 0, 0.5);
+    --shadow-modal: 0 24px 60px rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* ============================================================
+   2. BASE
+   ============================================================ */
+
+html { scroll-behavior: smooth; }
+
+body {
+  min-height: 100vh;
+  font-family: var(--font-ui);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 8% 12%, rgba(156, 59, 42, 0.06), transparent 34%),
+    radial-gradient(circle at 92% 6%, rgba(245, 166, 35, 0.07), transparent 30%),
+    var(--bg);
+  background-attachment: fixed;
+  padding-bottom: calc(var(--safe-bottom));
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ніжняя навігацыя на мабільным пакідае месца пад сабой */
+body.has-bottomnav { padding-bottom: calc(var(--bottomnav-h) + var(--safe-bottom) + var(--space-4)); }
+
+h1, h2, h3 { font-family: var(--font-display); font-weight: 700; line-height: 1.2; }
+h1 { font-size: clamp(30px, 6vw, 48px); }
+h2 { font-size: clamp(22px, 4vw, 30px); }
+
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+
+button { font: inherit; color: inherit; }
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0; border: 0;
+  clip: rect(0 0 0 0); clip-path: inset(50%);
+  overflow: hidden; white-space: nowrap;
+}
+
+.noscript-msg {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 2rem;
+  font-size: 1rem; line-height: 1.8; text-align: center; color: var(--muted);
+}
+
+/* ── Арнамент ── */
+.ornament {
+  height: 12px;
+  background-image: var(--ornament);
+  background-repeat: repeat-x;
+  background-position: center;
+  opacity: 0.9;
+}
+/* Палоска-вышыванка на ўсю даўжыню экрана.
+   Такі арнамент жыве ПА-ЗА .container: кантэйнер звужае змесціва на --gutter
+   з кожнага боку, таму ўнутры яго палоска ніколі не даходзіла да краёў, а
+   варыянт з max-width прыціскаўся да ЛЕВАГА краю пад цэнтраваным загалоўкам.
+   Па-за кантэйнерам шырыня элемента — шырыня старонкі. */
+.ornament--bleed { width: 100%; max-width: none; }
+.ornament--divider { margin: var(--space-6) 0; opacity: 0.6; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ============================================================
+   3. КАРКАС: верхняя панэль
+   ============================================================ */
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  background: color-mix(in srgb, var(--bg) 90%, transparent);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border-muted);
+  padding-top: var(--safe-top);
+  transition: transform 0.28s ease;
+}
+/* пры пракрутцы ўніз на старонцы аб'екта шапка з'язджае */
+body.nav-hidden .topbar { transform: translateY(-100%); }
+
+.topbar__inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  height: var(--topbar-h);
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 0 calc(var(--gutter) + var(--safe-left)) 0 calc(var(--gutter) + var(--safe-right));
+}
+
+.topbar__brand {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--brick);
+  letter-spacing: 0.01em;
+}
+
+.topbar__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 40px;
+  padding: var(--space-2) var(--space-3);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.topbar__back:focus-visible { background: var(--surface-2); color: var(--brick); }
+.topbar__back[hidden] { display: none; }
+.topbar__back svg { flex-shrink: 0; }
+
+.topbar__nav { display: none; gap: var(--space-1); margin-left: var(--space-4); }
+
+.topbar__navlink {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-pill);
+  font-size: 0.95rem;
+  color: var(--muted);
+  transition: color 0.2s, background 0.2s;
+}
+.topbar__navlink--active { color: var(--brick); font-weight: 500; }
+
+.topbar__actions { display: flex; align-items: center; gap: var(--space-2); margin-left: auto; }
+
+.icon-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; padding: 0;
+  border: 1px solid var(--border-muted);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+.icon-btn:focus-visible { background: var(--surface-2); color: var(--brick); transform: translateY(-1px); }
+.icon-btn[hidden] { display: none; }
+
+/* верхняя панэль празрыстая над hero-фота старонкі аб'екта */
+.topbar--over-hero {
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border-bottom-color: transparent;
+}
+.topbar--over-hero .topbar__back,
+.topbar--over-hero .icon-btn,
+.topbar--over-hero .lang-switcher__trigger { color: #fff; border-color: rgba(255, 255, 255, 0.4); background: rgba(30, 16, 10, 0.28); }
+.topbar--over-hero .topbar__brand { color: #fff; }
+.topbar--over-hero .topbar__navlink { color: rgba(255, 255, 255, 0.85); }
+
+/* ============================================================
+   4. Ніжняя навігацыя (мабільны)
+   ============================================================ */
+
+.bottomnav {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 60;
+  display: flex;
+  height: calc(var(--bottomnav-h) + var(--safe-bottom));
+  padding-bottom: var(--safe-bottom);
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--border-muted);
+}
+.bottomnav[hidden] { display: none; }
+
+.bottomnav__item {
+  flex: 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 2px;
+  min-width: 44px;
+  color: var(--muted);
+  font-size: 0.68rem;
+  transition: color 0.2s;
+}
+.bottomnav__item--active { color: var(--brick); }
+.bottomnav__item svg { display: block; }
+
+/* цэнтральная кнопка камеры — акцэнтавая, крыху выступае */
+.bottomnav__center {
+  position: relative;
+  /* Калонка цягнецца пад свой подпіс, а не застаецца 64px: радок
+     «Ліда ў аб'ектыве» ў 64px не змяшчаўся і пераносіўся на два радкі,
+     прычым першы радок маляваўся цагляным колерам па цагляным крузе —
+     цалкам нябачны. Шырыня калонкі = шырыня подпісу (але не менш за 64px),
+     таму FAB застаецца па цэнтры экрана, бо бакавыя элементы flex:1 роўныя. */
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 64px;
+}
+.bottomnav__label {
+  /* радкі заўсёды па цэнтры — і калі адзін, і калі два */
+  text-align: center;
+  line-height: 1.25;
+}
+.bottomnav__center .bottomnav__label {
+  /* Колер не зафіксаваны: подпіс успадкоўвае --muted ад .bottomnav__item,
+     каб кнопка камеры не выглядала пастаянна выбранай. */
+  /* Адна палоска: у 64px калонцы радок ламаўся напалову і апошні радок
+     выходзіў за ніжнюю мяжу панэлі. Месца па баках стае: суседнія подпісы
+     ў 393px шырыні займаюць ~62px і ~30px пры ~151px на калонку. */
+  white-space: nowrap;
+}
+.bottomnav__fab {
+  display: flex; align-items: center; justify-content: center;
+  width: 56px; height: 56px;
+  margin-top: -22px;
+  border-radius: 50%;
+  background: var(--brick);
+  color: #fff;
+  box-shadow: var(--shadow);
+  transition: background 0.2s, transform 0.2s;
+}
+.bottomnav__center:focus-visible .bottomnav__fab { background: var(--brick-dark); transform: translateY(-2px); }
+
+/* ============================================================
+   5. ЛЕЙАЎТ
+   ============================================================ */
+
+#app { display: block; }
+
+.page { padding-top: var(--space-6); }
+.page--home { padding-top: var(--space-5); }
+.page--map { padding-top: 0; }
+.page--object { padding-top: 0; display: flow-root; }
+/* hero-фота сядзіць пад празрыстай шапкай — без «пустога» зазору пад ёй */
+.page--object > .hero { margin-top: calc(-1 * (var(--topbar-h) + var(--safe-top))); }
+
+.container {
+  width: min(100% - 2 * var(--gutter), var(--content-max));
+  margin-inline: auto;
+}
+.container--read { max-width: var(--read-max); }
+
+.page__progress { /* пераходы паміж экранамі */
+  animation: page-in 0.22s ease-out both;
+}
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.eyebrow {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--brick);
+}
+
+/* ============================================================
+   6. ГАЛОЎНАЯ
+   ============================================================ */
+
+.home-hero { text-align: center; margin-bottom: var(--space-6); }
+.home-hero__title { margin: var(--space-2) 0 var(--space-3); }
+
+.section-title { margin-bottom: var(--space-4); }
+
+/* ── CTA «Ліда ў аб'ектыве» ── */
+.lens-cta {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--brick-dark), var(--brick));
+  color: #fff;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.lens-cta:focus-visible { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+
+.lens-cta__badge {
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  width: 60px; height: 60px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.16);
+}
+.lens-cta__body { display: flex; flex-direction: column; gap: 2px; }
+.lens-cta__title { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; }
+.lens-cta__desc { color: rgba(255, 255, 255, 0.82); font-size: 0.95rem; }
+.lens-cta__arrow { margin-left: auto; font-size: 1.5rem; }
+.lens-cta__frame { position: absolute; inset: 10px; pointer-events: none; }
+.lens-cta__frame::before,
+.lens-cta__frame::after,
+.lens-cta__frame i::before,
+.lens-cta__frame i::after {
+  content: ""; position: absolute; width: 16px; height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+}
+.lens-cta__frame::before { top: 0; left: 0; border-right: 0; border-bottom: 0; }
+.lens-cta__frame::after  { top: 0; right: 0; border-left: 0; border-bottom: 0; }
+.lens-cta__frame i::before { bottom: 0; left: 0; border-right: 0; border-top: 0; }
+.lens-cta__frame i::after  { bottom: 0; right: 0; border-left: 0; border-top: 0; }
+
+/* ── Чыпы-фільтры ── */
+/* ── Спіс славутасцяў ── */
+.sight-list { display: flex; flex-direction: column; gap: var(--space-4); }
+
+.feature-card {
+  position: relative;
+  display: block;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  isolation: isolate;
+  color: #fff;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.feature-card:focus-visible { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+.feature-card__img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+.feature-card__scrim {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(30, 16, 10, 0.82), rgba(30, 16, 10, 0.08) 60%, transparent);
+}
+.feature-card__badge {
+  position: absolute; top: var(--space-3); right: var(--space-3);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--amber);
+  color: #231d1a;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.feature-card__caption { display: block; position: absolute; left: var(--space-5); right: var(--space-5); bottom: var(--space-4); }
+.feature-card__title { display: block; font-size: clamp(20px, 4vw, 28px); text-shadow: 0 3px 14px rgba(0, 0, 0, 0.4); }
+.feature-card__desc { display: block; color: rgba(255, 255, 255, 0.85); font-size: 0.95rem; }
+
+.sight-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;   /* няпоўны апошні шэраг цэнтруецца */
+  gap: var(--space-4);
+}
+/* Роўныя шырыні картак пад лік слупкоў; паколькі рост забаронены (flex: 0 0 …),
+   няпоўны апошні шэраг застаецца па цэнтры, а не туліцца ўлева. */
+.sight-card { flex: 0 0 calc((100% - var(--space-4)) / 2); }
+
+.sight-card {
+  position: relative;
+  display: flex; flex-direction: column;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.sight-card:focus-visible { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+.sight-card:focus-visible .sight-card__title { color: var(--brick); }
+.sight-card:focus-visible { outline: 2px solid var(--brick); outline-offset: 2px; }
+
+.sight-card__media { position: relative; }
+.sight-card__img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.sight-card__num {
+  position: absolute; top: var(--space-2); left: var(--space-2);
+  display: flex; align-items: center; justify-content: center;
+  min-width: 30px; height: 30px; padding: 0 6px;
+  border-radius: var(--radius-pill);
+  background: var(--amber);
+  color: #231d1a;
+  font-size: 0.8rem; font-weight: 700;
+}
+.sight-card__body { padding: var(--space-3); }
+.sight-card__title { font-size: 1.05rem; }
+.sight-card__desc { margin-top: 2px; color: var(--muted); font-size: 0.85rem; }
+
+/* Манаграма замест фота, калі файл не загрузіўся */
+.sight-card__monogram,
+.feature-card__monogram {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; aspect-ratio: 4 / 3;
+  background: var(--surface-2); color: var(--brick);
+  font-family: var(--font-display); font-size: 3rem;
+}
+.feature-card__monogram { aspect-ratio: 16 / 9; }
+
+/* ── Міні-карта ── */
+.home-map { margin-top: var(--space-7); }
+.home-map__frame { height: 320px; border: 1px solid var(--border-muted); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow); }
+.home-map__frame[hidden] { display: none; }
+.home-map__cta {
+  display: flex; align-items: center; justify-content: center; gap: var(--space-2);
+  width: 100%;
+  margin-top: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-muted);
+  border-radius: var(--radius-lg);
+  background: var(--surface); color: var(--brick); font-weight: 500;
+}
+
+.page-footer { margin-top: var(--space-7); text-align: center; color: var(--muted); font-size: 0.85rem; }
+
+/* ============================================================
+   7. СТАРОНКА АБ'ЕКТА
+   ============================================================ */
+
+.hero { position: relative; margin-bottom: var(--space-5); }
+.hero__media { position: relative; background: var(--bg); }
+/* фота паказваем цалкам, без абрэзкі; ніз мякка раствараем у фон старонкі */
+.hero__img {
+  display: block; width: 100%; height: auto; max-height: min(85vh, 760px); object-fit: contain;
+  -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
+          mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
+}
+.hero__monogram {
+  width: 100%; height: min(68vh, 560px);
+  display: flex; align-items: center; justify-content: center;
+  background: var(--brick-dark); color: rgba(255, 255, 255, 0.85);
+  font-family: var(--font-display); font-size: 5rem;
+}
+/* зацямняем толькі верх — пад белыя кнопкі празрыстай шапкі */
+.hero__scrim {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, rgba(30, 16, 10, 0.5) 0%, transparent 30%);
+}
+/* загаловак заўсёды пад фота, каб не перакрываць здымак */
+.hero__caption { padding: var(--space-5) 0 var(--space-2); }
+.hero__title { color: var(--text); }
+.hero__chip {
+  display: inline-block; margin-top: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  color: var(--muted); font-size: 0.82rem;
+}
+.hero__inner { max-width: var(--content-max); margin-inline: auto; padding-inline: var(--gutter); }
+
+/* ── Прыліпная панэль аўдыягіда ── */
+.audio-player {
+  position: relative;
+  margin: 0 auto var(--space-5);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-muted);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  box-shadow: var(--shadow);
+}
+/* да верху прыліпае толькі падчас прайгравання, інакш з'язджае са старонкай */
+.audio-player--playing {
+  position: sticky;
+  top: calc(var(--topbar-h) + var(--safe-top) + var(--space-2));
+  z-index: 45;
+}
+body.nav-hidden .audio-player--playing { top: calc(var(--safe-top) + var(--space-3)); }
+
+.audio-player__row { display: flex; align-items: center; gap: var(--space-3); }
+.audio-player__play {
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  width: 48px; height: 48px;
+  border: 0; border-radius: 50%;
+  background: var(--brick); color: #fff;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+.audio-player__play:focus-visible { background: var(--brick-dark); transform: translateY(-1px); }
+.audio-player__play svg { display: block; }
+
+/* анімаваныя «хвалі» падчас прайгравання */
+.audio-wave { display: none; align-items: flex-end; gap: 3px; height: 22px; width: 22px; }
+.audio-wave__bar { width: 3px; height: 30%; background: var(--brick); border-radius: 2px; animation: wave 0.9s ease-in-out infinite; }
+.audio-wave__bar:nth-child(2) { animation-delay: 0.15s; }
+.audio-wave__bar:nth-child(3) { animation-delay: 0.3s; }
+.audio-player--playing .audio-wave { display: inline-flex; }
+@keyframes wave { 0%, 100% { height: 30%; } 50% { height: 100%; } }
+
+.audio-player__main { flex: 1 1 auto; min-width: 0; }
+.audio-player__progress {
+  position: relative;
+  height: 22px;
+  display: flex; align-items: center;
+  cursor: pointer;
+}
+.audio-player__track { width: 100%; height: 6px; border-radius: var(--radius-pill); background: var(--surface-2); overflow: hidden; }
+.audio-player__fill { height: 100%; width: 0; border-radius: var(--radius-pill); background: linear-gradient(90deg, var(--amber), var(--brick)); }
+.audio-player__time { margin-top: 2px; font-size: 0.76rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.audio-player__tools { display: flex; align-items: center; gap: var(--space-1); margin-top: var(--space-2); }
+.audio-player__skip {
+  min-width: 44px; height: 34px; padding: 0 var(--space-2);
+  border: 1px solid var(--border-muted); border-radius: var(--radius-pill);
+  background: var(--surface); color: var(--text); font-size: 0.78rem; cursor: pointer;
+}
+.audio-player__speed { display: inline-flex; gap: 2px; margin-left: auto; }
+.audio-player__speed-btn {
+  min-width: 40px; height: 34px; padding: 0 var(--space-2);
+  border: 1px solid var(--border-muted); border-radius: var(--radius-pill);
+  background: var(--surface); color: var(--muted); font-size: 0.78rem; cursor: pointer;
+}
+.audio-player__speed-btn[aria-pressed="true"] { background: var(--brick); border-color: var(--brick); color: #fff; }
+
+/* ── Хуткія факты ── */
+.facts { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-5); }
+.fact-chip {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border-muted);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* ── Артыкул ── */
+.article { font-family: var(--font-display); font-size: 18px; line-height: 1.7; color: var(--text); }
+.article p { margin-bottom: var(--space-4); }
+.article h2 { margin: var(--space-5) 0 var(--space-3); font-size: 22px; }
+.article blockquote {
+  margin: var(--space-5) 0;
+  padding-left: var(--space-4);
+  border-left: 3px solid var(--amber);
+  font-style: italic;
+  color: var(--muted);
+}
+.article--dropcap > p:first-of-type::first-letter {
+  float: left;
+  font-size: 3.1em;
+  line-height: 0.82;
+  padding: 0.06em 0.1em 0 0;
+  color: var(--brick);
+  font-weight: 700;
+}
+
+/* ── Двухслупковы дэсктопны макет старонкі аб'екта ── */
+/* Базавыя (мабільныя) водступы: без іх тэкст артыкула туліўся да самых краёў
+   экрана. На дэсктопе (media ≥1100px) дадаецца яшчэ і двухслупковая сетка. */
+.object-layout {
+  display: block;
+  width: min(100% - 2 * var(--gutter), var(--content-max));
+  margin-inline: auto;
+}
+.object-aside { display: flex; flex-direction: column; gap: var(--space-4); margin-top: var(--space-6); }
+
+/* ── Мінікарта аб'екта ── */
+.mini-map__frame { height: 260px; border: 1px solid var(--border-muted); border-radius: var(--radius-lg); overflow: hidden; }
+.mini-map__link {
+  display: flex; align-items: center; justify-content: center; gap: var(--space-2);
+  margin-top: var(--space-3);
+  padding: var(--space-3) var(--space-5);
+  border: 1px solid var(--brick);
+  border-radius: var(--radius-pill);
+  background: var(--brick); color: #fff; font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.2s;
+}
+.mini-map__link:focus-visible { background: var(--brick-dark); transform: translateY(-1px); }
+
+/* ── Выбар карты («Як дабрацца») ── */
+.map-choose { position: relative; }
+.map-choose > summary { list-style: none; cursor: pointer; }
+.map-choose > summary::-webkit-details-marker { display: none; }
+.map-choose__menu {
+  position: absolute; left: 0; top: calc(100% + 6px); min-width: 100%; z-index: 55;
+  margin: 0; padding: var(--space-1); list-style: none;
+  background: var(--surface); border: 1px solid var(--border-muted);
+  border-radius: var(--radius-lg); box-shadow: var(--shadow-menu);
+}
+.map-choose--up .map-choose__menu { top: auto; bottom: calc(100% + 6px); left: auto; right: 0; }
+.map-choose__item {
+  display: block; padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md); color: var(--text);
+  font-size: 0.92rem; white-space: nowrap; text-decoration: none;
+}
+.map-choose__item:focus-visible { background: var(--surface-2); color: var(--brick); }
+
+/* ============================================================
+   8. ГАЛЕРЭЯ
+   ============================================================ */
+
+.gallery__viewport { position: relative; }
+.gallery__track {
+  display: flex; overflow-x: auto;
+  scroll-snap-type: x mandatory; scroll-behavior: smooth;
+  border-radius: var(--radius-lg);
+  scrollbar-width: none;
+}
+.gallery__track::-webkit-scrollbar { display: none; }
+.gallery__track:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.gallery__image {
+  flex: 0 0 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: contain;
+  background: var(--surface-2);
+  border-radius: var(--radius-lg);
+  scroll-snap-align: start;
+}
+.gallery__dots { display: flex; justify-content: center; margin-top: var(--space-1); }
+.gallery__dot { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; padding: 0; border: 0; background: none; cursor: pointer; }
+.gallery__dot::before { content: ''; width: 42%; height: 42%; border-radius: var(--radius-pill); background: var(--border-muted); transition: background-color 0.2s ease, transform 0.2s ease; }
+.gallery__dot[aria-current='true']::before { background: var(--brick); transform: scale(1.25); }
+.gallery__arrow {
+  position: absolute; top: 50%; z-index: 2;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px;
+  border: 0; border-radius: var(--radius-pill);
+  background: rgba(30, 16, 10, 0.55); color: #fff;
+  transform: translateY(-50%); cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+.gallery__arrow--prev { left: var(--space-2); }
+.gallery__arrow--next { right: var(--space-2); }
+.gallery__arrow:disabled { opacity: 0.35; cursor: default; }
+.gallery__counter {
+  position: absolute; right: var(--space-3); bottom: var(--space-3); z-index: 2;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: rgba(30, 16, 10, 0.6); color: #fff; font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================
+   9. КВІЗ
+   ============================================================ */
+
+.quiz {
+  margin-top: var(--space-5);
+  padding: var(--space-5);
+  border: 1px solid var(--border-muted);
+  border-radius: var(--radius-lg);
+  background: var(--surface-2);
+}
+.quiz__summary { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); cursor: pointer; list-style: none; }
+.quiz__summary::-webkit-details-marker { display: none; }
+.quiz__chevron { display: inline-flex; flex-shrink: 0; color: var(--muted); transition: transform 0.2s ease; }
+.quiz[open] .quiz__chevron { transform: rotate(180deg); }
+.quiz__body { display: flex; flex-direction: column; gap: var(--space-3); padding-top: var(--space-4); }
+.quiz__title { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); transition: color 0.2s; }
+.quiz__question { font-size: 1.05rem; font-weight: 700; line-height: 1.35; }
+.quiz__options { display: flex; flex-direction: column; gap: var(--space-2); }
+.quiz__option {
+  width: 100%; padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-muted); border-radius: var(--radius-md);
+  background: var(--surface); color: var(--text);
+  font-family: var(--font-ui); font-size: 0.95rem; text-align: left; cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, transform 0.2s;
+}
+.quiz__option:focus-visible:not(:disabled) { border-color: var(--brick); transform: translateY(-1px); }
+.quiz__option:disabled { cursor: default; }
+.quiz__option--correct { background: color-mix(in srgb, var(--ok) 14%, var(--surface)); border-color: var(--ok); color: var(--ok); font-weight: 700; }
+.quiz__option--correct::after { content: " ✓"; }
+.quiz__option--wrong { background: color-mix(in srgb, var(--bad) 12%, var(--surface)); border-color: var(--bad); color: var(--bad); font-weight: 700; }
+.quiz__option--wrong::after { content: " ✕"; }
+.quiz__feedback { font-size: 0.95rem; font-weight: 700; }
+.quiz__feedback:empty { display: none; }
+.quiz__feedback--correct { color: var(--ok); }
+.quiz__feedback--wrong { color: var(--bad); }
+.quiz__explanation { padding-left: var(--space-3); border-left: 3px solid var(--amber); font-size: 0.9rem; color: var(--muted); }
+
+/* ============================================================
+   10. СТАНЫ / ШКІЛЕТЫ
+   ============================================================ */
+
+.status {
+  max-width: 700px; margin: var(--space-5) auto; padding: var(--space-5);
+  border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow);
+  text-align: center; color: var(--muted);
+}
+.status--error { border: 1px solid color-mix(in srgb, var(--bad) 40%, transparent); color: var(--bad); }
+.status--empty { border: 1px solid var(--border-muted); }
+.status__retry {
+  margin-top: var(--space-3); padding: var(--space-2) var(--space-5);
+  border: 0; border-radius: var(--radius-pill); background: var(--brick); color: #fff; cursor: pointer;
+}
+
+.skeleton { display: flex; flex-direction: column; gap: var(--space-4); }
+.skeleton__card { border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow); overflow: hidden; }
+.skeleton__media { aspect-ratio: 16 / 9; background: var(--surface-2); }
+.skeleton__line { height: 14px; margin: var(--space-3) var(--space-4); border-radius: var(--radius-pill); background: var(--surface-2); }
+.skeleton__line--short { width: 45%; }
+.skeleton--pulse * { animation: skeleton-pulse 1.2s ease-in-out infinite; }
+@keyframes skeleton-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+
+/* ============================================================
+   11. ЭКРАН «ЛІДА Ў АБ'ЕКТЫВЕ» (рэжым камеры)
+   ============================================================ */
+
+.lens { position: relative; }
+
+/* Загаловак і апісанне экрана «Ліда ў аб'ектыве» */
+.lens-hero { text-align: center; margin-bottom: var(--space-4); }
+.lens-hero__title { margin-bottom: var(--space-4); }
+
+.lens-about {
+  display: flex; align-items: center; gap: var(--space-4);
+  margin-bottom: var(--space-5);
+  padding: var(--space-5);
+  background: var(--surface);
+  border: 1px solid var(--border-muted);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+.lens-about__icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0; width: 52px; height: 52px;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--brick) 12%, var(--surface));
+  color: var(--brick);
+}
+.lens-about__text { color: var(--text); font-size: 1.02rem; }
+.lens__stage {
+  position: relative;
+  width: 100%;
+  min-height: 60vh;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: #17100c;
+  box-shadow: var(--shadow);
+}
+.lens__video { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.lens__hint {
+  /* Падказка павінна сядзець ВЫШЭЙ ніжняй панэлі кіравання, інакш пры жывой
+     камеры яна накладаецца на кнопкі «Загрузіць фота» / затвор. */
+  position: absolute; left: 50%; bottom: calc(var(--space-4) + 72px + var(--space-5) + var(--safe-bottom) + var(--space-3));
+  transform: translateX(-50%);
+  max-width: calc(100% - 2 * var(--space-5));
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-pill);
+  background: rgba(30, 16, 10, 0.55); color: #fff; font-size: 0.9rem;
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  white-space: nowrap;
+  text-align: center;
+}
+.lens__hint[hidden] { display: none; }
+
+.lens__spinner {
+  position: absolute; top: 50%; left: 50%; width: 44px; height: 44px; margin: -22px 0 0 -22px;
+  border: 4px solid rgba(255, 255, 255, 0.35); border-top-color: #fff; border-radius: 50%;
+  animation: lens-spin 0.8s linear infinite;
+}
+.lens__spinner[hidden] { display: none; }
+@keyframes lens-spin { to { transform: rotate(360deg); } }
+
+/* успышка пры здымку */
+.lens__flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
+.lens__flash--on { animation: flash 0.12s ease-out; }
+@keyframes flash { from { opacity: 0.9; } to { opacity: 0; } }
+
+/* кнопка «спыніць камеру» — бачная толькі калі камера ўключана */
+.lens__stop {
+  position: absolute; top: var(--space-3); right: var(--space-3); z-index: 6;
+  display: none; align-items: center; justify-content: center;
+  width: 44px; height: 44px; padding: 0;
+  border: 0; border-radius: 50%;
+  background: rgba(30, 16, 10, 0.5); color: #fff; cursor: pointer;
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+.lens--live .lens__stop { display: inline-flex; }
+.lens__stop:focus-visible { background: rgba(30, 16, 10, 0.75); }
+
+/* ніжняя панэль кіравання */
+.lens__controls {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 5;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--space-4) var(--space-5) calc(var(--space-5) + var(--safe-bottom));
+}
+.lens__tool {
+  display: inline-flex; flex-direction: column; align-items: center; gap: 4px;
+  width: 64px;
+  border: 0; background: none; color: #fff; font-size: 0.7rem; cursor: pointer;
+}
+.lens__tool svg { display: block; }
+.lens__tool:disabled { opacity: 0.45; cursor: default; }
+.lens__tool--spacer { pointer-events: none; }
+
+.shutter {
+  display: flex; align-items: center; justify-content: center;
+  width: 72px; height: 72px; padding: 0;
+  border: 4px solid #fff; border-radius: 50%;
+  background: transparent; cursor: pointer;
+}
+.shutter__inner { width: 54px; height: 54px; border-radius: 50%; background: var(--brick); transition: transform 0.15s; }
+.shutter:active .shutter__inner { transform: scale(0.86); }
+.shutter:disabled { opacity: 0.45; cursor: default; }
+
+/* экран «чаканне» (камера выключана) */
+.lens-idle {
+  position: absolute; inset: 0; z-index: 4;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: var(--space-4); padding: var(--space-6); text-align: center;
+  background: linear-gradient(160deg, var(--brick-dark), var(--brick));
+  color: #fff;
+}
+.lens-idle[hidden] { display: none; }
+.lens-idle__icon {
+  display: flex; align-items: center; justify-content: center;
+  width: 84px; height: 84px; border-radius: 50%; background: rgba(255, 255, 255, 0.16);
+}
+.lens-idle__text { max-width: 30ch; color: rgba(255, 255, 255, 0.9); }
+.lens-idle__btn {
+  padding: var(--space-3) var(--space-6);
+  border: 0; border-radius: var(--radius-pill);
+  background: #fff; color: var(--brick-dark);
+  font-weight: 700; cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.lens__error { padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); background: color-mix(in srgb, var(--bad) 12%, var(--bg)); color: var(--bad); text-align: center; }
+
+/* шторка выніку */
+.sheet {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 65;
+  max-height: 70vh;
+  display: flex; flex-direction: column;
+  background: var(--surface);
+  border-top-left-radius: var(--radius-xl); border-top-right-radius: var(--radius-xl);
+  box-shadow: var(--shadow-modal);
+  transform: translateY(100%);
+  transition: transform 0.28s ease-out;
+  padding-bottom: var(--safe-bottom);
+}
+.sheet--open { transform: translateY(0); }
+.sheet[hidden] { display: none; }
+.sheet__handle { width: 44px; height: 5px; margin: var(--space-3) auto var(--space-1); border-radius: var(--radius-pill); background: var(--border-muted); }
+.sheet__ornament { height: 10px; background-image: var(--ornament); background-repeat: repeat-x; background-position: center; opacity: 0.8; margin-bottom: var(--space-3); }
+.sheet__inner { overflow-y: auto; padding: var(--space-2) var(--space-5) var(--space-6); }
+.sheet__badge { display: inline-block; padding: var(--space-1) var(--space-3); border-radius: var(--radius-pill); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+.sheet__badge--ok { background: color-mix(in srgb, var(--ok) 16%, var(--surface)); color: var(--ok); }
+.sheet__badge--unknown { background: var(--surface-2); color: var(--muted); }
+
+.sheet__hit { display: flex; align-items: center; gap: var(--space-4); margin-top: var(--space-4); }
+.sheet__thumb { width: 96px; height: 96px; flex-shrink: 0; object-fit: cover; border-radius: var(--radius-md); }
+.sheet__meta { min-width: 0; }
+.sheet__title { font-size: 1.3rem; }
+.sheet__desc { color: var(--muted); font-size: 0.9rem; }
+
+/* кальцо ўпэўненасці */
+.ring { position: relative; width: 64px; height: 64px; flex-shrink: 0; margin-left: auto; }
+.ring svg { transform: rotate(-90deg); }
+.ring__track { fill: none; stroke: var(--surface-2); stroke-width: 6; }
+.ring__value { fill: none; stroke: var(--brick); stroke-width: 6; stroke-linecap: round; }
+.ring__label { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700; color: var(--brick); }
+
+.sheet__open {
+  display: block; width: 100%; margin-top: var(--space-4);
+  padding: var(--space-3) var(--space-5);
+  border: 0; border-radius: var(--radius-pill);
+  background: var(--brick); color: #fff; font-weight: 700; text-align: center;
+  transition: background 0.2s;
+}
+.sheet__open:focus-visible { background: var(--brick-dark); }
+
+.sheet__details { margin-top: var(--space-4); }
+.sheet__details > summary { cursor: pointer; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+
+.lens-bars { display: flex; flex-direction: column; gap: var(--space-2); margin-top: var(--space-3); }
+.lens-bar__top { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); font-size: 0.86rem; color: var(--muted); }
+.lens-bar__track { height: 7px; margin-top: var(--space-1); border-radius: var(--radius-pill); background: var(--surface-2); overflow: hidden; }
+.lens-bar__fill { height: 100%; border-radius: var(--radius-pill); background: linear-gradient(90deg, var(--amber), var(--brick)); }
+
+.tips { list-style: none; margin-top: var(--space-3); display: flex; flex-direction: column; gap: var(--space-2); }
+.tip { padding-left: var(--space-5); position: relative; color: var(--muted); font-size: 0.9rem; }
+.tip::before { content: ""; position: absolute; left: 0; top: 0.45em; width: 8px; height: 8px; border-radius: 2px; background: var(--brick); transform: rotate(45deg); }
+.sheet__retry {
+  display: block; width: 100%; margin-top: var(--space-4);
+  padding: var(--space-3); border: 1px solid var(--brick); border-radius: var(--radius-pill);
+  background: transparent; color: var(--brick); font-weight: 600; cursor: pointer;
+}
+
+/* ============================================================
+   12. ЭКРАН «КАРТА»
+   ============================================================ */
+
+/* экран «вялікая карта» — роўна памеру экрана, без скролу */
+body.route-map { height: 100vh; height: 100dvh; min-height: 0; overflow: hidden; }
+.mapscreen { position: relative; }
+.mapscreen__map,
+.mapscreen__fallback {
+  height: calc(100vh - var(--safe-top) - var(--topbar-h) - var(--bottomnav-h) - var(--safe-bottom));
+  height: calc(100dvh - var(--safe-top) - var(--topbar-h) - var(--bottomnav-h) - var(--safe-bottom));
+}
+.mapscreen__map { width: 100%; min-height: 0; }
+.mapscreen__locate {
+  position: absolute; right: var(--space-4); bottom: var(--space-5); z-index: 1100;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 48px; height: 48px; border: 0; border-radius: 50%;
+  background: var(--surface); color: var(--brick); box-shadow: var(--shadow); cursor: pointer;
+}
+.mapscreen__fallback { overflow: auto; padding: var(--space-6); text-align: center; color: var(--muted); }
+.mapscreen__fallback ul { list-style: none; margin-top: var(--space-4); display: flex; flex-direction: column; gap: var(--space-2); }
+.mapscreen__fallback a { color: var(--brick); }
+
+/* маркеры: круглы цагляны з белым нумарам */
+.map-marker { display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: var(--brick); color: #fff; font-family: var(--font-ui); font-weight: 700; font-size: 0.85rem; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35); }
+
+/* ніжняя картка аб'екта на карце */
+.map-card {
+  position: absolute; left: var(--space-4); right: var(--space-4); bottom: calc(var(--space-4) + var(--safe-bottom)); z-index: 1100;
+  display: flex; gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  background: var(--surface); box-shadow: var(--shadow-modal);
+  transform: translateY(140%);
+  transition: transform 0.25s ease-out;
+}
+.map-card--open { transform: translateY(0); }
+.map-card__img { width: 84px; height: 84px; flex-shrink: 0; object-fit: cover; border-radius: var(--radius-sm); }
+.map-card__body { min-width: 0; flex: 1; }
+.map-card__title { font-family: var(--font-display); font-size: 1.1rem; }
+.map-card__desc { color: var(--muted); font-size: 0.85rem; }
+.map-card__actions { display: flex; gap: var(--space-2); margin-top: var(--space-2); }
+.map-card__btn { display: inline-flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-4); border-radius: var(--radius-pill); font-size: 0.85rem; cursor: pointer; }
+.map-card__btn--primary { background: var(--brick); color: #fff; }
+.map-card__btn--ghost { border: 1px solid var(--border-muted); color: var(--text); }
+.map-card__close { position: absolute; top: var(--space-2); right: var(--space-2); width: 28px; height: 28px; border: 0; border-radius: 50%; background: var(--surface-2); color: var(--muted); cursor: pointer; }
+
+/* попап Leaflet */
+.map-popup { display: flex; flex-direction: column; gap: var(--space-2); min-width: 160px; }
+.map-popup__img { width: 100%; height: 110px; object-fit: cover; border-radius: var(--radius-sm); }
+.map-popup__title { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--text); line-height: 1.3; }
+.map-popup-wrap .leaflet-popup-content-wrapper { border-radius: var(--radius-md); padding: 0; overflow: hidden; }
+.map-popup-wrap .leaflet-popup-content { margin: 0; padding: var(--space-3); }
+.map-popup-wrap .leaflet-popup-close-button {
+  top: var(--space-2) !important; right: var(--space-2) !important;
+  width: 24px !important; height: 24px !important; line-height: 24px !important;
+  font-size: 18px !important; background: rgba(255, 255, 255, 0.85) !important;
+  border-radius: 50% !important; color: #231d1a !important; z-index: 10;
+}
+
+/* ============================================================
+   13. АКНО «ПАДЗЯЛІЦЦА»
+   ============================================================ */
+
+.share-modal { position: fixed; inset: 0; z-index: 70; display: flex; align-items: center; justify-content: center; padding: var(--space-5); }
+.share-modal[hidden] { display: none; }
+body.share-open { overflow: hidden; }
+.share-modal__backdrop { position: absolute; inset: 0; background: rgba(20, 10, 5, 0.6); animation: share-fade 0.2s ease both; }
+.share-modal__dialog {
+  position: relative; width: 100%; max-width: 420px; max-height: calc(100vh - 40px); overflow-y: auto;
+  padding: var(--space-6) var(--space-6) var(--space-5);
+  border-radius: var(--radius-xl); background: var(--surface); box-shadow: var(--shadow-modal);
+  animation: share-pop 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes share-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes share-pop { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+.share-modal__close {
+  position: absolute; top: var(--space-4); right: var(--space-4);
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; padding: 0; border: none; border-radius: 50%;
+  background: var(--surface-2); color: var(--muted); cursor: pointer; transition: background 0.2s, color 0.2s;
+}
+.share-modal__close:focus-visible { background: var(--border-muted); color: var(--text); }
+.share-modal__qr { width: 100%; max-width: 230px; margin: 0 auto; }
+.share-modal__qr svg { display: block; width: 100%; height: auto; border-radius: var(--radius-md); }
+.share-modal__error { font-size: 0.88rem; color: var(--bad); text-align: center; }
+.share-modal__hint { margin-top: var(--space-3); font-size: 0.82rem; color: var(--muted); text-align: center; overflow-wrap: anywhere; }
+.share-modal__divider { height: 0; margin: var(--space-5) 0 var(--space-4); border: 0; border-top: 1px solid var(--border-muted); }
+.share-modal__label { margin-bottom: var(--space-4); font-size: 1rem; font-family: var(--font-display); color: var(--text); }
+.share-modal__socials { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-3); margin-bottom: var(--space-5); }
+.share-social { display: inline-flex; flex-direction: column; align-items: center; gap: var(--space-2); width: 66px; color: var(--muted); font-size: 0.72rem; text-decoration: none; text-align: center; }
+.share-social__icon { display: flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 50%; color: #fff; transition: transform 0.2s, box-shadow 0.2s; }
+.share-social:focus-visible .share-social__icon { transform: translateY(-2px); box-shadow: var(--shadow); }
+.share-social__name { overflow-wrap: anywhere; }
+.share-social--native { padding: 0; border: none; background: none; font-family: var(--font-ui); cursor: pointer; }
+.share-modal__copy {
+  display: flex; align-items: center; justify-content: center; gap: var(--space-3);
+  width: 100%; padding: var(--space-3) var(--space-5);
+  border: none; border-radius: var(--radius-pill); background: var(--brick); color: #fff;
+  font-family: var(--font-ui); font-size: 0.92rem; font-weight: 700; cursor: pointer;
+  transition: background 0.25s, transform 0.25s;
+}
+.share-modal__copy:focus-visible { background: var(--brick-dark); transform: translateY(-1px); }
+
+/* ============================================================
+   14. TOAST
+   ============================================================ */
+
+.toast {
+  position: fixed; left: 50%; bottom: calc(var(--space-6) + var(--safe-bottom)); z-index: 80;
+  max-width: min(92vw, 420px); padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-pill); background: var(--text); color: var(--surface);
+  font-size: 0.9rem; text-align: center; box-shadow: var(--shadow);
+  opacity: 0; transform: translate(-50%, 12px); pointer-events: none;
+  transition: opacity 0.25s, transform 0.25s;
+}
+.toast--visible { opacity: 1; transform: translate(-50%, 0); }
+
+/* ============================================================
+   15. ПЕРАКЛЮЧАЛЬНІК МОВЫ
+   ============================================================ */
+
+.lang-switcher { position: relative; font-family: var(--font-ui); }
+.lang-switcher__trigger {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  min-height: 40px; padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border-muted); border-radius: var(--radius-pill);
+  background: var(--surface); color: var(--text); font-size: 0.9rem;
+  cursor: pointer; white-space: nowrap; user-select: none;
+  -webkit-appearance: none; appearance: none;
+  transition: background 0.2s, color 0.2s;
+}
+.lang-switcher__trigger:focus-visible { background: var(--surface-2); color: var(--brick); }
+.lang-switcher__globe, .lang-switcher__caret { flex-shrink: 0; }
+.lang-switcher--open .lang-switcher__caret { transform: rotate(180deg); }
+.lang-switcher__dropdown {
+  display: none; position: absolute; top: calc(100% + var(--space-2)); right: 0;
+  min-width: 148px; margin: 0; padding: var(--space-1) 0; list-style: none;
+  background: var(--surface); border: 1px solid var(--border-muted); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-menu); overflow: hidden; z-index: 80;
+}
+.lang-switcher__dropdown--open { display: block; }
+.lang-switcher__option { padding: var(--space-2) var(--space-4); font-size: 0.85rem; color: var(--muted); cursor: pointer; transition: background 0.15s, color 0.15s; outline: none; }
+.lang-switcher__option:focus { background: var(--surface-2); color: var(--text); }
+.lang-switcher__option--active { color: var(--brick); font-weight: 700; cursor: default; }
+
+/* ============================================================
+   16. АДАПТЫЎНАСЦЬ
+   ============================================================ */
+
+/* планшэт і дэсктоп */
+@media (min-width: 721px) {
+  :root { --gutter: var(--space-6); --bottomnav-h: 0px; }
+  .topbar__nav { display: flex; }
+  .bottomnav { display: none; }
+  body.has-bottomnav { padding-bottom: 0; }
+  .home-map__frame { height: 420px; }
+  .home-map__cta { display: inline-flex; width: auto; }
+  .sight-card { flex-basis: calc((100% - 2 * var(--space-4)) / 3); }
+  .lens__stage { min-height: 0; }
+}
+
+@media (min-width: 1100px) {
+  :root { --content-max: 1120px; }
+  .sight-card { flex-basis: calc((100% - 3 * var(--space-4)) / 4); }
+
+  /* старонка аб'екта: артыкул злева, прыліпная панэль справа */
+  .object-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 60%) minmax(0, 35%);
+    gap: var(--space-7);
+    justify-content: space-between;
+    align-items: start;
+    width: min(100% - 2 * var(--gutter), var(--content-max));
+    margin-inline: auto;
+  }
+  .object-aside { margin-top: var(--space-5); position: sticky; top: calc(var(--topbar-h) + var(--safe-top) + var(--space-4)); }
+  .audio-player { position: static; }
+}
+
+@media (max-width: 600px) {
+  .hero__monogram { height: 62vh; }
+  .audio-player--playing { top: calc(var(--topbar-h) + var(--safe-top)); }
+}
+
+@media (max-width: 400px) {
+  .sight-grid { gap: var(--space-3); }
+  .sight-card { flex-basis: calc((100% - var(--space-3)) / 2); }
+}
+
+
+/* ============================================================
+   17. HOVER — толькі для прылад з сапраўдным курсорам
+   ============================================================ */
+/* На сэнсарным экране браўзер пасля тапу пакідае :hover на элеменце,
+   пакуль не тапнеш у іншае месца. Праз гэта картка выглядае «выбранай»
+   (чырвоны загаловак, падняцце, цень), хоць нічога не выбрана.
+   Таму ўсе hover-эфекты жывуць пад @media (hover: hover). */
+@media (hover: hover) {
+  .topbar__back:hover { background: var(--surface-2); color: var(--brick); }
+  .topbar__navlink:hover { color: var(--text); background: var(--surface-2); }
+  .icon-btn:hover { background: var(--surface-2); color: var(--brick); transform: translateY(-1px); }
+  .topbar--over-hero .topbar__back:hover { background: rgba(30, 16, 10, 0.5); }
+  .topbar--over-hero .topbar__navlink:hover { background: rgba(30, 16, 10, 0.4); color: #fff; }
+  .bottomnav__item:hover { color: var(--text); }
+  .bottomnav__center:hover .bottomnav__fab { background: var(--brick-dark); transform: translateY(-2px); }
+  .lens-cta:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+  .feature-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+  .sight-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+  .sight-card:hover .sight-card__title { color: var(--brick); }
+  .audio-player__play:hover { background: var(--brick-dark); transform: translateY(-1px); }
+  .audio-player__skip:hover { border-color: var(--brick); color: var(--brick); }
+  .mini-map__link:hover { background: var(--brick-dark); transform: translateY(-1px); }
+  .map-choose__item:hover { background: var(--surface-2); color: var(--brick); }
+  .gallery__dot:hover::before { background: var(--muted); }
+  .gallery__arrow:hover { background: rgba(30, 16, 10, 0.85); }
+  .quiz__summary:hover .quiz__title { color: var(--brick); }
+  .quiz__option:hover:not(:disabled) { border-color: var(--brick); transform: translateY(-1px); }
+  .lens__stop:hover { background: rgba(30, 16, 10, 0.75); }
+  .lens-idle__btn:hover { transform: translateY(-1px); }
+  .sheet__open:hover { background: var(--brick-dark); }
+  .share-modal__close:hover { background: var(--border-muted); color: var(--text); }
+  .share-social:hover .share-social__icon { transform: translateY(-2px); box-shadow: var(--shadow); }
+  .share-modal__copy:hover { background: var(--brick-dark); transform: translateY(-1px); }
+  .lang-switcher__trigger:hover { background: var(--surface-2); color: var(--brick); }
+  .lang-switcher__option:hover { background: var(--surface-2); color: var(--text); }
+}

@@ -1,0 +1,26 @@
+# Што не трапляе ў docker-вобраз (build context).
+# Гэтыя файлы ўсё роўна застаюцца ў архіве — тут толькі для зборкі.
+.git
+.gitignore
+.venv
+.playwright-mcp
+**/__pycache__
+*.pyc
+**/node_modules
+*.zip
+
+# лакальныя артэфакты запуску
+srv.log
+srv.err
+~$*.docx
+
+# не патрэбна ў вобразе (сервер аддае толькі assets/css/js/data + карэнне)
+docs
+ml
+tools
+lens_data/ref
+lens_data/_candidates
+lens_data/_manual
+lens_data/test
+
+README*

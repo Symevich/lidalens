@@ -1,0 +1,39 @@
+# Installed dependencies of the tools/ scripts (see tools/package.json)
+node_modules/
+
+# Python virtual environment for the lens feature and the recogniser server
+.venv/
+
+# Server logs written by run.bat
+srv.log
+srv.err
+
+# Word lock files
+~$*.docx
+
+# Reference photos moved out during curation
+lens_data/ref/_discard/
+
+# Python bytecode of the tools/ scripts
+__pycache__/
+*.pyc
+
+# Scratch space for throwaway experiments (also holds API keys and raw TTS)
+tools/.tmp/
+
+# Playwright MCP session artifacts (browser logs/snapshots)
+.playwright-mcp/
+
+# Competition regulations (reference only, not part of the guide)
+Положение_ПАТРИОТ_by_2026.txt
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# Сакрэты і базы — ніколі ў рэпазіторыю (патрабаванне сервернага кантракту)
+.env
+.env.*
+*.db
+*.sqlite
+*.sqlite3

@@ -1,0 +1,48 @@
+{
+  "name": "LidaLens — аўдыёгід па славутасцях Ліды",
+  "short_name": "LidaLens",
+  "description": "Інтэрактыўны аўдыёгід па славутасцях горада Ліда. Працуе афлайн.",
+  "lang": "be",
+  "dir": "ltr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f6f0e4",
+  "theme_color": "#9c3b2a",
+  "categories": ["travel", "education"],
+  "icons": [
+    {
+      "src": "./assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Славутасці",
+      "url": "./index.html#/"
+    },
+    {
+      "name": "Ліда ў аб'ектыве",
+      "url": "./index.html#/lens"
+    },
+    {
+      "name": "Карта",
+      "url": "./index.html#/map"
+    }
+  ]
+}

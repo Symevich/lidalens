@@ -1,0 +1,20 @@
+services:
+  lidalens:
+    build: .
+    image: lidalens:latest
+    container_name: lidalens
+    ports:
+      # Толькі лакальна: звонку трапляем праз Cloudflare-тунэль (lidalens.parkavajaserver.xyz).
+      # Прамы доступ да 8095 з інтэрнэту закрыты.
+      - "127.0.0.1:8095:8000"
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/lens/health')"
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
